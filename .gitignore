@@ -1,0 +1,22 @@
+__pycache__/
+.ipynb_checkpoints/
+.vscode/
+.git/
+web/audio/
+web/static/uploads/
+README_bac.md
+notes.md
+models/
+outdir*/
+# filelists/
+
+res/
+samples/
+datasets/
+pretrained_models/
+results/
+*.out
+logs/
+*.ipynb
+sentence-transformers.py
+checkpoints/

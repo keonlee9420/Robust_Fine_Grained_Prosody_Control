@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" autoUpload="Always" serverName="GPUServer2" remoteFilesAllowedToDisappearOnAutoupload="false">
+    <serverData>
+      <paths name="GPUServer2">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/ubuntu/Kyumin/tacotron2" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+    </serverData>
+    <option name="myAutoUpload" value="ALWAYS" />
+  </component>
+</project>

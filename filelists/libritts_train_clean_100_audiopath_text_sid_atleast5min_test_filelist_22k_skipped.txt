@@ -1,0 +1,12 @@
+/home/keon/speech-datasets/LibriTTS_preprocessed/train-clean-100/2436/2481/2436_2481_000024_000000-22k.wav|I stammered, "If ... if she dies ... will you flash us word?"|2436
+/home/keon/speech-datasets/LibriTTS_preprocessed/train-clean-100/2436/2476/2436_2476_000004_000003-22k.wav|Then I sought out Carter.|2436
+/home/keon/speech-datasets/LibriTTS_preprocessed/train-clean-100/2436/2481/2436_2481_000005_000001-22k.wav|Both were closed.|2436
+/home/keon/speech-datasets/LibriTTS_preprocessed/train-clean-100/2836/5355/2836_5355_000063_000000-22k.wav|She made no reply.|2836
+/home/keon/speech-datasets/LibriTTS_preprocessed/train-clean-100/2836/5355/2836_5355_000008_000000-22k.wav|"What do you mean by 'deal?'" he asked, settling the logs to his apparent satisfaction.|2836
+/home/keon/speech-datasets/LibriTTS_preprocessed/train-clean-100/2836/5355/2836_5355_000038_000001-22k.wav|"How on the wrong scent?"|2836
+/home/keon/speech-datasets/LibriTTS_preprocessed/train-clean-100/7302/86814/7302_86814_000011_000004-22k.wav|"Let us horsewhip the fine gentleman!" said others.|7302
+/home/keon/speech-datasets/LibriTTS_preprocessed/train-clean-100/7302/86814/7302_86814_000007_000001-22k.wav|The prisoners then approached and formed a circle.|7302
+/home/keon/speech-datasets/LibriTTS_preprocessed/train-clean-100/7302/86815/7302_86815_000008_000001-22k.wav|The Judge.|7302
+/home/keon/speech-datasets/LibriTTS_preprocessed/train-clean-100/8088/284756/8088_284756_000077_000003-22k.wav|The apparatus is strewn all over the place."|8088
+/home/keon/speech-datasets/LibriTTS_preprocessed/train-clean-100/8088/284756/8088_284756_000055_000005-22k.wav|Then she saw the pool.|8088
+/home/keon/speech-datasets/LibriTTS_preprocessed/train-clean-100/8088/284756/8088_284756_000085_000000-22k.wav|"Yes, that's very true: Carson is a most decent sort of chap." The words were not spoken.|8088

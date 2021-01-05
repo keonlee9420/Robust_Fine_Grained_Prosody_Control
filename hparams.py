@@ -74,6 +74,13 @@ def create_hparams(hparams_string=None, verbose=False):
         postnet_kernel_size=5,
         postnet_n_convolutions=5,
 
+        # Speaker embedding
+        n_speakers=123,
+        speaker_embedding_dim=128,
+
+        # Reference encoder
+        prosody_embedding_dim=2, # speech-side=2, text-side=4
+
         ################################
         # Optimization Hyperparameters #
         ################################

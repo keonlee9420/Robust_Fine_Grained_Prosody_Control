@@ -5,6 +5,7 @@ from torch import nn
 from torch.nn import functional as F
 from layers import ConvNorm, LinearNorm
 from utils import to_gpu, get_mask_from_lengths
+from modules import SpeechSideProsodyEncoder
 
 
 class LocationLayer(nn.Module):
@@ -479,6 +480,8 @@ class Tacotron2(nn.Module):
         self.speaker_embedding = nn.Embedding(
             hparams.n_speakers, hparams.speaker_embedding_dim)
 
+        self.prosody_encoder = SpeechSideProsodyEncoder(hparams)
+
     def parse_batch(self, batch):
         text_padded, input_lengths, mel_padded, gate_padded, \
             output_lengths, speaker_ids = batch
@@ -511,9 +514,8 @@ class Tacotron2(nn.Module):
         text_lengths, output_lengths = text_lengths.data, output_lengths.data
 
         embedded_inputs = self.embedding(text_inputs).transpose(1, 2)
-        embedded_text = self.encoder(embedded_inputs, text_lengths) # (seq_len, batch, num_directions * hidden_size): batch, seq_len, int(hparams.encoder_embedding_dim / 2)
-        # TODO: embedded_prosody = refernce encoder에서 output으로 나올 variable-length prosody embedding의 len은 seq_len과 같아야 함. seq_len = embedded_text.size(1)
-        embedded_prosody = torch.zeros(embedded_text.size(0), embedded_text.size(1), 2, device=embedded_text.device) # batch, seq_len, prosody_embedding_dim 
+        embedded_text = self.encoder(embedded_inputs, text_lengths) # batch, seq_len, int(hparams.encoder_embedding_dim / 2)
+        embedded_prosody, ref_alignments = self.prosody_encoder(embedded_text, text_lengths, mels, output_lengths) # batch, seq_len, prosody_embedding_dim
         embedded_speakers = self.speaker_embedding(speaker_ids)[:, None] # batch, 1, speaker_embedding_dim
         embedded_speakers = embedded_speakers.repeat(1, embedded_text.size(1), 1) # batch, seq_len, speaker_embedding_dim
 
@@ -527,16 +529,17 @@ class Tacotron2(nn.Module):
         mel_outputs_postnet = mel_outputs + mel_outputs_postnet
 
         return self.parse_output(
-            [mel_outputs, mel_outputs_postnet, gate_outputs, alignments],
+            [mel_outputs, mel_outputs_postnet, gate_outputs, (alignments, ref_alignments)],
             output_lengths)
 
     def inference(self, inputs):
         text_inputs, mels, speaker_ids = inputs
+        text_lengths = torch.LongTensor([len(x) for x in text_inputs]).cuda().data
+        output_lengths = torch.LongTensor([len(x[0]) for x in mels]).cuda().data
 
         embedded_inputs = self.embedding(text_inputs).transpose(1, 2)
         embedded_text = self.encoder.inference(embedded_inputs)
-        # TODO: embedded_prosody
-        embedded_prosody = torch.zeros(embedded_text.size(0), embedded_text.size(1), 2, device=embedded_text.device)
+        embedded_prosody, ref_alignments = self.prosody_encoder(embedded_text, text_lengths, mels, output_lengths)
         embedded_speakers = self.speaker_embedding(speaker_ids)[:, None]
         embedded_speakers = embedded_speakers.repeat(1, embedded_text.size(1), 1)
 
@@ -550,6 +553,6 @@ class Tacotron2(nn.Module):
         mel_outputs_postnet = mel_outputs + mel_outputs_postnet
 
         outputs = self.parse_output(
-            [mel_outputs, mel_outputs_postnet, gate_outputs, alignments])
+            [mel_outputs, mel_outputs_postnet, gate_outputs, (alignments, ref_alignments)])
 
         return outputs

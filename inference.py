@@ -42,10 +42,10 @@ def make_space_above(axes, topmargin=1): # see https://stackoverflow.com/a/55768
     fig.subplots_adjust(bottom=s.bottom*h/figh, top=1-topmargin/figh)
     fig.set_figheight(figh)
 
-def plot_data(data, transcript, image_path, figsize=(16, 4)):
+def plot_data(data, transcript, image_path, figsize=(20, 4)):
     print("plot results...")
     fig, axes = plt.subplots(1, len(data), figsize=figsize)
-    fig_names = ['reference', 'output', 'alignment']
+    fig_names = ['reference', 'output', 'ref_alignment', 'alignment']
     for i in range(len(data)):
         axes[i].imshow(data[i], aspect='auto', origin='bottom', 
                        interpolation='none')
@@ -100,8 +100,10 @@ def synthesize(hparams, model, waveglow, stft, outdir, transcript, reference_aud
         output_mel_path = os.path.join(
             outdir, "{}.png".format(filename))
         mel_outputs, mel_outputs_postnet, _, alignments = model.inference((sequence, reference_mel, speaker_id)) # should be running under no_grad
+        alignments, ref_alignments = alignments
         plot_data((reference_mel.float().data.cpu().numpy()[0],
                 mel_outputs_postnet.float().data.cpu().numpy()[0],
+                ref_alignments.float().data.cpu().numpy()[0],
                 alignments.float().data.cpu().numpy()[0].T),
                 transcript,
                 output_mel_path)

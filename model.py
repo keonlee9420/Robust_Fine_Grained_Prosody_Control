@@ -5,7 +5,7 @@ from torch import nn
 from torch.nn import functional as F
 from layers import ConvNorm, LinearNorm
 from utils import to_gpu, get_mask_from_lengths
-from modules import SpeechSideProsodyEncoder
+from modules import TextSideProsodyEncoder
 
 
 class LocationLayer(nn.Module):
@@ -480,7 +480,7 @@ class Tacotron2(nn.Module):
         self.speaker_embedding = nn.Embedding(
             hparams.n_speakers, hparams.speaker_embedding_dim)
 
-        self.prosody_encoder = SpeechSideProsodyEncoder(hparams)
+        self.prosody_encoder = TextSideProsodyEncoder(hparams)
 
     def parse_batch(self, batch):
         text_padded, input_lengths, mel_padded, gate_padded, \

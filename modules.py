@@ -8,7 +8,7 @@ from CoordConv import CoordConv2d
 from utils import get_mask_from_lengths
 
 
-class SpeechSideProsodyEncoder(nn.Module):
+class TextSideProsodyEncoder(nn.Module):
     '''
     embedded_text --- [N, seq_len, encoder_embedding_dim]
     mels --- [N, n_mels*r, Ty/r], r=1
@@ -16,7 +16,7 @@ class SpeechSideProsodyEncoder(nn.Module):
     alignments --- [N, seq_len, ref_len], Ty/r = ref_len
     '''
     def __init__(self, hparams):
-        super(SpeechSideProsodyEncoder, self).__init__()
+        super(TextSideProsodyEncoder, self).__init__()
         self.prosody_embedding_dim = hparams.prosody_embedding_dim
         self.encoder = ReferenceEncoder(hparams)
         self.ref_attn = ScaledDotProductAttention(hparams)

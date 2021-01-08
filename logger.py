@@ -19,6 +19,7 @@ class Tacotron2Logger(SummaryWriter):
     def log_validation(self, reduced_loss, model, y, y_pred, iteration):
         self.add_scalar("validation.loss", reduced_loss, iteration)
         _, mel_outputs, gate_outputs, alignments = y_pred
+        alignments, ref_alignments = alignments
         mel_targets, gate_targets = y
 
         # plot distribution of parameters
@@ -31,6 +32,10 @@ class Tacotron2Logger(SummaryWriter):
         self.add_image(
             "alignment",
             plot_alignment_to_numpy(alignments[idx].data.cpu().numpy().T),
+            iteration, dataformats='HWC')
+        self.add_image(
+            "reference_encoder_alignment",
+            plot_alignment_to_numpy(ref_alignments[idx].data.cpu().numpy()),
             iteration, dataformats='HWC')
         self.add_image(
             "mel_target",

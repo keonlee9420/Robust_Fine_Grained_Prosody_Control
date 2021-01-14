@@ -35,6 +35,9 @@ class TextSideProsodyEncoder(nn.Module):
         # Attention
         style_embed, alignments = self.ref_attn(embedded_text, key, value, attn_mask)
 
+        # Apply ReLU as the activation function to force the values of the prosody embedding to lie in [0, ∞].
+        style_embed = F.relu(style_embed)
+
         return style_embed, alignments
 
 

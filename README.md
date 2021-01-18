@@ -34,7 +34,7 @@ This implementation uses the [LibriTTS dataset](https://openslr.org/60/).
 ## Multi-GPU (distributed) and Automatic Mixed Precision Training
 1. Not supported in current implementation.
 
-## Inference demo
+## Inference
 1. Single sample: `python inference.py -c checkpoint/path -r reference_audio/wav/path -t "synthesize text"`
 4. Multi samples: `python inference_all.py -c checkpoint/path -r reference_audios/dir/path`
 

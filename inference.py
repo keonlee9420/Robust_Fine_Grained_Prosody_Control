@@ -71,7 +71,7 @@ def load_mel(hparams, stft, reference_audio_path):
 
 def prepare_speaker_set(hparams):
     # Define Speakers Set
-    speaker_ids = TextMelLoader("filelists/libritts_train_clean_100_audiopath_text_sid_shorterthan10s_atleast5min_train_filelist_22k_skipped.txt", hparams).speaker_ids
+    speaker_ids = TextMelLoader("filelists/libritts_train_clean_100_audiopath_text_sid_shorterthan10s_atleast5min_train_filelist_skipped.txt", hparams).speaker_ids
     speakers = pd.read_csv('filelists/libritts_speakerinfo.txt', engine='python',header=None, comment=';', sep=' *\| *', 
                         names=['ID', 'SEX', 'SUBSET', 'MINUTES', 'NAME'])
     speakers['MELLOTRON_ID'] = speakers['ID'].apply(lambda x: speaker_ids[x] if x in speaker_ids else -1)

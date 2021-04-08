@@ -20,9 +20,13 @@ class TextSideProsodyEncoder(nn.Module):
         self.prosody_embedding_dim = hparams.prosody_embedding_dim
         self.encoder = ReferenceEncoder(hparams)
         self.ref_attn = ScaledDotProductAttention(hparams)
+        self.encoder_bottleneck = nn.Linear(hparams.ref_enc_gru_size, hparams.prosody_embedding_dim * 2)
 
     def forward(self, embedded_text, text_lengths, mels, mels_lengths):
         embedded_prosody, _ = self.encoder(mels)
+
+        # Bottleneck
+        embedded_prosody = self.encoder_bottleneck(embedded_prosody)
 
         # Obtain k and v from prosody embedding
         key, value = torch.split(embedded_prosody, self.prosody_embedding_dim, dim=-1) # [N, Ty, prosody_embedding_dim] * 2
@@ -97,7 +101,7 @@ class ReferenceEncoder(nn.Module):
 
         out_channels = self.calculate_channels(hparams.n_mel_channels, 3, 2, 1, K)
         self.gru = nn.GRU(input_size=hparams.ref_enc_filters[-1] * out_channels,
-                          hidden_size=hparams.prosody_embedding_dim * 2,
+                          hidden_size=hparams.ref_enc_gru_size,
                           batch_first=True)
         self.n_mels = hparams.n_mel_channels
 
@@ -114,7 +118,7 @@ class ReferenceEncoder(nn.Module):
         N = out.size(0)
         out = out.contiguous().view(N, T, -1)  # [N, Ty, 128*n_mels//2^K]
 
-        memory, out = self.gru(out)  # memory --- [N, Ty, prosody_embedding_dim * 2], out --- [1, N, prosody_embedding_dim * 2]
+        memory, out = self.gru(out)  # memory --- [N, Ty, ref_enc_gru_size], out --- [1, N, ref_enc_gru_size]
 
         return memory, out.squeeze(0)
 

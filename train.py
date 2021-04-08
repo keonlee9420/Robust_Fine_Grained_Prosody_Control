@@ -46,15 +46,17 @@ def init_distributed(hparams, n_gpus, rank, group_name):
     print("Done initializing distributed")
 
 
-def prepare_dataloaders(hparams):
+def prepare_dataloaders(hparams, rank, world_size):
     # Get data, data loaders and collate function ready
     trainset = TextMelLoader(hparams.training_files, hparams)
     valset = TextMelLoader(hparams.validation_files, hparams,
-                            speaker_ids=trainset.speaker_ids)
+                           speaker_ids=trainset.speaker_ids)
     collate_fn = TextMelCollate(hparams.n_frames_per_step)
 
     if hparams.distributed_run:
-        train_sampler = DistributedSampler(trainset)
+        train_sampler = DistributedSampler(trainset,
+                                        num_replicas=world_size,
+                                        rank=rank )
         shuffle = False
     else:
         train_sampler = None
@@ -64,8 +66,7 @@ def prepare_dataloaders(hparams):
                               sampler=train_sampler,
                               batch_size=hparams.batch_size, pin_memory=False,
                               drop_last=True, collate_fn=collate_fn)
-    return train_loader, valset, collate_fn
-
+    return train_loader, valset, collate_fn, train_sampler
 
 def prepare_directories_and_logger(output_directory, log_directory, rank):
     if rank == 0:
@@ -126,7 +127,7 @@ def save_checkpoint(model, optimizer, learning_rate, iteration, filepath):
                 'learning_rate': learning_rate}, filepath)
 
 
-def validate(model, criterion, valset, iteration, batch_size, n_gpus,
+def validate(model, criterion, valset, iteration, batch_size, world_size,
              collate_fn, logger, distributed_run, rank):
     """Handles all the validation scoring and printing"""
     model.eval()
@@ -138,11 +139,11 @@ def validate(model, criterion, valset, iteration, batch_size, n_gpus,
 
         val_loss = 0.0
         for i, batch in enumerate(val_loader):
-            x, y = model.parse_batch(batch)
+            x, y = model.parse_batch(batch,distributed_run)
             y_pred = model(x)
             loss = criterion(y_pred, y)
             if distributed_run:
-                reduced_val_loss = reduce_tensor(loss.data, n_gpus).item()
+                reduced_val_loss = reduce_tensor(loss.data, world_size).item()
             else:
                 reduced_val_loss = loss.item()
             val_loss += reduced_val_loss
@@ -156,6 +157,8 @@ def validate(model, criterion, valset, iteration, batch_size, n_gpus,
 def train(gpu, args):
     rank = args.nr * args.gpus + gpu
 
+    print(args.gpus)
+    print(gpu)
     if args.hparams.distributed_run:
         init_distributed(args.hparams, args.hparams.world_size, rank, args.group_name)
 
@@ -414,9 +417,9 @@ if __name__ == '__main__':
                         required=False, help='comma separated name=value pairs')
 
     ################################2020.12.29#######################################
-    parser.add_argument('-n', '--nodes', default=2, type=int, metavar='N',
+    parser.add_argument('-n', '--nodes', default=1, type=int, metavar='N',
                         help='number of data loading workers (default: 4)')
-    parser.add_argument('-g', '--gpus', default=2, type=int,
+    parser.add_argument('-g', '--gpus', default=1, type=int,
                         help='number of gpus per node')
     parser.add_argument('-nr', '--nr', default=1, type=int,
                         help='ranking within the nodes')

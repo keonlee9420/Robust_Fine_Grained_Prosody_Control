@@ -257,13 +257,16 @@ def train(gpu, args):
                 logger.log_training(
                     reduced_loss, grad_norm, learning_rate, duration, iteration)
 
+            print('is_overflow : ', is_overflow, '/  iteration : ', iteration, '/ rank : ', rank)
+
             if not is_overflow and (iteration % args.hparams.iters_per_checkpoint == 0):
                 validate(model, criterion, valset, iteration,
                         args.hparams.batch_size, args.hparams.world_size, collate_fn, logger,
                         args.hparams.distributed_run, rank)
-                if rank == 0:
+                if rank == 1:
                     checkpoint_path = os.path.join(
                         args.output_directory, "checkpoint_{}".format(iteration))
+                    print('checkpoint_path : ', checkpoint_path)
                     save_checkpoint(model, optimizer, learning_rate, iteration,
                                     checkpoint_path)
 
@@ -388,7 +391,7 @@ def train2(output_directory, log_directory, checkpoint_path, warm_start, n_gpus,
                 validate(model, criterion, valset, iteration,
                          hparams.batch_size, n_gpus, collate_fn, logger,
                          hparams.distributed_run, rank)
-                if rank == 0:
+                if rank == 1:
                     checkpoint_path = os.path.join(
                         output_directory, "checkpoint_{}_{}".format(iteration, output_directory.split('/')[-1].replace('outdir_', '')))
                     save_checkpoint(model, optimizer, learning_rate, iteration,

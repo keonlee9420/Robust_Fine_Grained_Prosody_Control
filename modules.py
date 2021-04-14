@@ -49,6 +49,7 @@ class ScaledDotProductAttention(nn.Module): # https://github.com/jadore801120/at
         self.dropout = nn.Dropout(hparams.ref_attention_dropout)
         self.d_q = hparams.encoder_embedding_dim
         self.d_k = hparams.prosody_embedding_dim
+        # 아래 코드에서는 LinearNorm이 2개 실행이 된다.(512*128) -> (3*128)
         self.linears = nn.ModuleList([
             LinearNorm(in_dim, hparams.ref_attention_dim, bias=False, w_init_gain='tanh') \
                 for in_dim in (self.d_q, self.d_k)

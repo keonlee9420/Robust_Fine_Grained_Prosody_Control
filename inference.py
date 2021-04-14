@@ -32,7 +32,7 @@ from utils import load_wav_to_torch
 import textwrap
 
 def make_space_above(axes, topmargin=1): # see https://stackoverflow.com/a/55768955
-    """ increase figure size to make topmargin (in inches) space for 
+    """ increase figure size to make topmargin (in inches) space for
         titles, without changing the axes sizes"""
     fig = axes.flatten()[0].figure
     s = fig.subplotpars
@@ -47,14 +47,14 @@ def plot_data(data, transcript, image_path, figsize=(20, 4)):
     fig, axes = plt.subplots(1, len(data), figsize=figsize)
     fig_names = ['reference', 'output', 'ref_alignment', 'alignment']
     for i in range(len(data)):
-        axes[i].imshow(data[i], aspect='auto', origin='bottom', 
+        axes[i].imshow(data[i], aspect='auto', origin='bottom',
                        interpolation='none')
         axes[i].set_xlabel(fig_names[i])
     plt.suptitle("\n".join(textwrap.wrap(transcript, 130))) # see https://stackoverflow.com/a/55768955
     make_space_above(axes, topmargin=1)
     plt.savefig(image_path)
     print("All plots saved!: %s" % image_path)
-    
+
     plt.close()
 
 def load_mel(hparams, stft, reference_audio_path):
@@ -72,7 +72,7 @@ def load_mel(hparams, stft, reference_audio_path):
 def prepare_speaker_set(hparams):
     # Define Speakers Set
     speaker_ids = TextMelLoader("filelists/libritts_train_clean_100_audiopath_text_sid_shorterthan10s_atleast5min_train_filelist_skipped.txt", hparams).speaker_ids
-    speakers = pd.read_csv('filelists/libritts_speakerinfo.txt', engine='python',header=None, comment=';', sep=' *\| *', 
+    speakers = pd.read_csv('filelists/libritts_speakerinfo.txt', engine='python',header=None, comment=';', sep=' *\| *',
                         names=['ID', 'SEX', 'SUBSET', 'MINUTES', 'NAME'])
     speakers['MELLOTRON_ID'] = speakers['ID'].apply(lambda x: speaker_ids[x] if x in speaker_ids else -1)
     female_speakers = cycle(
@@ -117,7 +117,7 @@ def synthesize(hparams, model, waveglow, stft, outdir, transcript, reference_aud
         audio = audio.astype('int16')
         output_audio_path = os.path.join(
             outdir, "{}.wav".format(filename))
-        
+
         write(output_audio_path, hparams.sampling_rate, audio)
         # print("Synthesized audio saved!: %s" % output_audio_path)
     print("\n")
@@ -147,7 +147,7 @@ if __name__=="__main__":
                     required=True, help='audio path for reference (style transfer)')
     parser.add_argument('-w', '--waveglow_path', type=str,
                     required=False, help='waveglow path',
-                    default='/home/keon/contextron/pretrained_models/waveglow_256channels_universal_v5.pt')
+                    default='/home/mcm/pyprojects/Robust_Fine_Grained_Prosody_Control/waveglow/waveglow_256channels.pt')
     args = parser.parse_args()
     transcript = args.text
     checkpoint_path = args.checkpoint_path

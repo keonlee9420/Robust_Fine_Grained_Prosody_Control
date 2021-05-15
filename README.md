@@ -41,6 +41,18 @@ This implementation uses the [LibriTTS dataset](https://openslr.org/60/).
 N.b.  When performing Mel-Spectrogram to Audio synthesis, make sure Tacotron 2
 and the Mel decoder were trained on the same mel-spectrogram representation. 
 
+# Citation
+
+```
+@misc{lee2021robust_fine_grained_prosody_control,
+  author = {Lee, Keon},
+  title = {Robust_Fine_Grained_Prosody_Control},
+  year = {2021},
+  publisher = {GitHub},
+  journal = {GitHub repository},
+  howpublished = {\url{https://github.com/keonlee9420/Robust_Fine_Grained_Prosody_Control}}
+}
+```
 
 ## Related repos
 [WaveGlow](https://github.com/NVIDIA/WaveGlow) Faster than real time Flow-based

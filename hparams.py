@@ -15,6 +15,7 @@ def create_hparams(hparams_string=None, verbose=False):
         dynamic_loss_scaling=True,
         fp16_run=False,
         distributed_run=False,
+        world_size=1,
         dist_backend="nccl",
         dist_url="tcp://localhost:54321",
         cudnn_enabled=True,
@@ -25,14 +26,15 @@ def create_hparams(hparams_string=None, verbose=False):
         # Data Parameters             #
         ################################
         load_mel_from_disk=False,
-        training_files='filelists/libritts_train_clean_100_audiopath_text_sid_shorterthan10s_atleast5min_train_filelist_22k_skipped.txt',
-        validation_files='filelists/libritts_train_clean_100_audiopath_text_sid_atleast5min_val_filelist_22k_skipped.txt',
+        training_files='filelists/libritts_train_clean_100_audiopath_text_sid_shorterthan10s_atleast5min_train_filelist_skipped.txt',
+        validation_files='filelists/libritts_train_clean_100_audiopath_text_sid_atleast5min_val_filelist_skipped.txt',
         text_cleaners=['english_cleaners'],
 
         ################################
         # Audio Parameters             #
         ################################
         max_wav_value=32768.0,
+        # sampling_rate=24000,
         sampling_rate=22050,
         filter_length=1024,
         hop_length=256,
@@ -94,9 +96,11 @@ def create_hparams(hparams_string=None, verbose=False):
         ################################
         use_saved_learning_rate=False,
         learning_rate=1e-3,
+        learning_rate_min=1e-5,
+        learning_rate_anneal=50000,
         weight_decay=1e-6,
         grad_clip_thresh=1.0,
-        batch_size=64,
+        batch_size=16,
         mask_padding=True  # set model's padded outputs to padded values
     )
 

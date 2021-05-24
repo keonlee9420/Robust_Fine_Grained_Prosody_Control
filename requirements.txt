@@ -92,3 +92,8 @@ Werkzeug==1.0.1
 widgetsnbextension==3.5.1
 wrapt==1.12.1
 zipp==3.4.0
+matplotlib==2.1.0
+tensorflow==1.10.0
+scikit-learn==0.20.1
+scipy==1.1.0
+

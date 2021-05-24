@@ -482,9 +482,22 @@ class Tacotron2(nn.Module):
 
         self.prosody_encoder = TextSideProsodyEncoder(hparams)
 
-    def parse_batch(self, batch):
-        text_padded, input_lengths, mel_padded, gate_padded, \
-            output_lengths, speaker_ids = batch
+    def parse_batch(self, batch, dist ):
+        if dist:
+            text_padded, input_lengths, mel_padded, gate_padded, \
+                output_lengths, speaker_ids = batch
+
+            text_padded = text_padded.cuda(non_blocking=True)
+            input_lengths  = input_lengths.cuda(non_blocking=True)
+            mel_padded     = mel_padded.cuda(non_blocking=True)
+            gate_padded    = gate_padded.cuda(non_blocking=True)
+            output_lengths = output_lengths.cuda(non_blocking=True)
+            speaker_ids    = speaker_ids.cuda(non_blocking=True)
+
+        else:
+            text_padded, input_lengths, mel_padded, gate_padded, \
+                output_lengths, speaker_ids = batch
+
         text_padded = to_gpu(text_padded).long()
         input_lengths = to_gpu(input_lengths).long()
         max_len = torch.max(input_lengths.data).item()
@@ -493,9 +506,9 @@ class Tacotron2(nn.Module):
         output_lengths = to_gpu(output_lengths).long()
         speaker_ids = to_gpu(speaker_ids.data).long()
 
-        return (
-            (text_padded, input_lengths, mel_padded, max_len, output_lengths, speaker_ids),
-            (mel_padded, gate_padded))
+        return ((text_padded, input_lengths, mel_padded, max_len,
+                 output_lengths, speaker_ids),
+                (mel_padded, gate_padded))
 
     def parse_output(self, outputs, output_lengths=None):
         if self.mask_padding and output_lengths is not None:

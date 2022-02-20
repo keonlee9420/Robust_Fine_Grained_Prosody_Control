@@ -57,7 +57,7 @@ class ScaledDotProductAttention(nn.Module): # https://github.com/jadore801120/at
             LinearNorm(in_dim, hparams.ref_attention_dim, bias=False, w_init_gain='tanh') \
                 for in_dim in (self.d_q, self.d_k)
         ])
-        self.score_mask_value = 1e-9
+        self.score_mask_value = -1e9
 
     def forward(self, q, k, v, mask=None):
         q, k = [linear(vector) for linear, vector in zip(self.linears, (q, k))]
